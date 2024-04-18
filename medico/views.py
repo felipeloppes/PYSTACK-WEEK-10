@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from . models import Especialidades, DadosMedico
+from . models import Especialidades, DadosMedico, is_medico
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.messages import constants
@@ -7,6 +7,10 @@ from django.contrib.messages import constants
 
 # Create your views here.
 def cadastro_medico(request):
+    if is_medico(request.user):
+        messages.add_message(request, constants.WARNING, 'Você já está cadastrado como médico.')
+        return redirect('/medicos/abrir_horario')
+
     if request.method == "GET":
         especialidades = Especialidades.objects.all()
         return render(request, 'cadastro_medico.html', {'especialidades': especialidades})
